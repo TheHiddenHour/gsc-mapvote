@@ -83,6 +83,8 @@ playerMapvote() {
         return;
     }
 
+    self iprintlnbold("[{+speed_throw}][{+attack}] to scroll, [{+usereload}] to select.");
+
     self.mapvoteScrollHud = self spawnClientShader("white", "RIGHT", "RIGHT", 0, -150, 125, 18, (0, 0, 1), 1, 0);
     self.mapvoteScrollIndex = 0;
 
