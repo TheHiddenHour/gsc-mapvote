@@ -30,6 +30,8 @@ onPlayerSpawned() {
 }
 
 initializeMapvote() {
+    level thread monitorMapvoteEndgame();
+
     if(!isFirstRoundOv()) {
         return;
     }
@@ -50,28 +52,33 @@ initializeMapvote() {
     level thread monitorMapvote();
 }
 
-monitorMapvote() {
-    level endon("game_ended");
-
-    for(;;) {
-        level waittill("prematch_over");
-
-        foreach(player in level.players) {
-            player notify("end_player_mapvote"); // End player mapvote thread 
-            if(isDefined(player.mapvoteScrollHud)) { // Destroy player mapvote scroller 
-                player.mapvoteScrollHud destroy();
-            }
-        }
-
-        foreach(option in level.optionHuds) { // Destroy server mapvote huds 
-            option destroy();
-        }
-
-        // most_voted_map = level.selectableMaps[getMostVotedMapIndex(level.mapVotes)];
-        most_voted_map = getMostVotedMapname(level.selectableMaps, level.mapVotes);
-        setDvar("sv_maprotation", "map " + most_voted_map);
-        allClientsPrint("^1" + most_voted_map + " ^7was the most voted map");
+monitorMapvoteEndgame() {
+    level waittill("game_ended");
+    if(wasLastRound()) {
+        level waittill("final_killcam_done");
+        most_voted_map = getDvar("mostvotedmap");
+        changeMap(most_voted_map);
     }
+}
+
+monitorMapvote() {
+    level waittill("prematch_over");
+
+    // Destory every player's scroller hud 
+    foreach(player in level.players) {
+        player notify("end_player_mapvote"); // End player mapvote thread 
+        if(isDefined(player.mapvoteScrollHud)) { // Destroy player mapvote scroller 
+            player.mapvoteScrollHud destroy();
+        }
+    }
+
+    foreach(option in level.optionHuds) { // Destroy server mapvote huds 
+        option destroy();
+    }
+
+    most_voted_map = getMostVotedMapname(level.selectableMaps, level.mapVotes);
+    setDvar("mostvotedmap", most_voted_map);
+    allClientsPrint("^1" + most_voted_map + " ^7was the most voted map");
 }
 
 playerMapvote() {
@@ -196,4 +203,17 @@ createMapArray() {
 
 isFirstRoundOv() { // Alternative function for isFirstRound() which doesn't seem to work 
     return game["roundsplayed"] == 0;
+}
+
+changeMap(map) {
+    // Credits to TheNiceUb3r 
+    setDvar("ls_mapname", map);
+    setDvar("mapname", map);
+    setDvar("party_mapname", map);
+    setDvar("ui_mapname", map);
+    setDvar("ui_currentMap", map);
+    setDvar("ui_mapname", map);
+    setDvar("ui_preview_map", map);
+    setDvar("ui_showmap", map);
+    map(map);
 }
