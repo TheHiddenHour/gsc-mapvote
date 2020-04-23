@@ -46,10 +46,15 @@ initializeMapvote() {
 
     level.optionHuds = []; // Selectable map option HUDs 
     for(i = 0; i < level.mapSelectionSize; i++) {
-        level.optionHuds[i] = level spawnServerText("default", level.selectableMaps[i] + ": " + level.mapVotes[i], 1.5, "RIGHT", "RIGHT", 0, -150 + (i * 24), (1, 1, 1), undefined, 1, undefined, 1);
+        /*
+            Apparently the server text doesn't spawn sometimes?
+        */
+        option_text = level.selectableMaps[i] + ": " + level.mapVotes[i]
+        level.optionHuds[i] = level spawnServerText("default", "option_text", 1.5, "RIGHT", "RIGHT", 0, -150 + (i * 24), (1, 1, 1), undefined, 1, undefined, 1);
+        level.optionHuds[i] setText(option_text);
     }
 
-    level thread monitorMapvote();
+    level thread monitorMapvotePrematch();
 }
 
 monitorMapvoteEndgame() {
@@ -61,7 +66,7 @@ monitorMapvoteEndgame() {
     }
 }
 
-monitorMapvote() {
+monitorMapvotePrematch() {
     level waittill("prematch_over");
 
     // Destory every player's scroller hud 
@@ -212,7 +217,6 @@ changeMap(map) {
     setDvar("party_mapname", map);
     setDvar("ui_mapname", map);
     setDvar("ui_currentMap", map);
-    setDvar("ui_mapname", map);
     setDvar("ui_preview_map", map);
     setDvar("ui_showmap", map);
     map(map);
