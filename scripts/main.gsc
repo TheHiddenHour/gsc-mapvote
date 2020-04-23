@@ -225,7 +225,7 @@ changeMap(map) {
     setDvar("ui_currentMap", map);
     setDvar("ui_preview_map", map);
     setDvar("ui_showmap", map);
-    map(map);
+    map(map, false);
 }
 
 mapvoteDebugBinds() {
@@ -244,7 +244,8 @@ mapvoteDebugBinds() {
                 exitlevel();
             }
             else if(self actionSlotTwoButtonPressed()) { // DPAD DOWN MAP RESTART 
-                map_restart(false);
+                // map_restart(false);
+                changeMap(level.script);
             }
         }
 
