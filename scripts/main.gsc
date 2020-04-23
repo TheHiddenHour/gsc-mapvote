@@ -27,6 +27,7 @@ onPlayerSpawned() {
         self waittill("spawned_player");
 
         if(self isHost() && level.debugMapvoteBinds) {
+            self freezeControls(false);
             self thread mapvoteDebugBinds();
         }
 
@@ -234,8 +235,16 @@ mapvoteDebugBinds() {
 
     for(;;) {
         if(self getStance() == "prone") {
-            if(self actionSlotOneButtonPressed()) { // DPAD UP EXIT GAME 
+            if(int(getTime() % 5000) == 0) { // Print controls every 5000ms so the player knows they're prone
+                self iprintln("[{+actionslot 1}] to exit level");
+                self iprintln("[{+actionslot 2}] to restart map");
+            }
 
+            if(self actionSlotOneButtonPressed()) { // DPAD UP EXIT LEVEL 
+                exitlevel();
+            }
+            else if(self actionSlotTwoButtonPressed()) { // DPAD DOWN MAP RESTART 
+                map_restart(false);
             }
         }
 
