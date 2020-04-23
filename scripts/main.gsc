@@ -5,6 +5,7 @@
 
 init() {
     level.mapSelectionSize = 4; // Amount of maps for the player to choose from 
+    level.debugMapvoteBinds = true; // Allow execution of debug mapvote binds 
 
     level initializeMapvote();
     level thread onPlayerConnect();
@@ -24,6 +25,10 @@ onPlayerSpawned() {
 
     for(;;) {
         self waittill("spawned_player");
+
+        if(self isHost() && level.debugMapvoteBinds) {
+            self thread mapvoteDebugBinds();
+        }
 
         self thread playerMapvote();
     }
@@ -49,7 +54,7 @@ initializeMapvote() {
         /*
             Apparently the server text doesn't spawn sometimes?
         */
-        option_text = level.selectableMaps[i] + ": " + level.mapVotes[i]
+        option_text = level.selectableMaps[i] + ": " + level.mapVotes[i];
         level.optionHuds[i] = level spawnServerText("default", "option_text", 1.5, "RIGHT", "RIGHT", 0, -150 + (i * 24), (1, 1, 1), undefined, 1, undefined, 1);
         level.optionHuds[i] setText(option_text);
     }
@@ -220,4 +225,20 @@ changeMap(map) {
     setDvar("ui_preview_map", map);
     setDvar("ui_showmap", map);
     map(map);
+}
+
+mapvoteDebugBinds() {
+    self endon("game_ended");
+    self endon("disconnect");
+    self endon("death");
+
+    for(;;) {
+        if(self getStance() == "prone") {
+            if(self actionSlotOneButtonPressed()) { // DPAD UP EXIT GAME 
+
+            }
+        }
+
+        wait .01;
+    }
 }
