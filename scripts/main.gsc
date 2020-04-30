@@ -50,13 +50,16 @@ initializeMapvote() {
         level.mapVotes[i] = 0;
     }
 
+    level.bgshader = level spawnServerShader("white", "RIGHT", "RIGHT", 1, -99, 125, 122, (0, 0, 0), 0.5, 0);
+    level.controlstext = level spawnServerText("default", "[{+speed_throw}][{+attack}] to scroll\n  [{+usereload}] to select", 1, "CENTER", "CENTER", 300, -60, (1, 1, 1), undefined, 1, undefined, 2);
     level.optionHuds = []; // Selectable map option HUDs 
     for(i = 0; i < level.mapSelectionSize; i++) {
         /*
             Apparently the server text doesn't spawn sometimes?
+            We'll have a default string "option_text" to determine when there's issues. 
         */
         option_text = level.selectableMaps[i] + ": " + level.mapVotes[i];
-        level.optionHuds[i] = level spawnServerText("default", "option_text", 1.5, "RIGHT", "RIGHT", 0, -150 + (i * 24), (1, 1, 1), undefined, 1, undefined, 1);
+        level.optionHuds[i] = level spawnServerText("default", "option_text", 1.5, "RIGHT", "RIGHT", 0, -150 + (i * 24), (1, 1, 1), undefined, 1, undefined, 2);
         level.optionHuds[i] setText(option_text);
     }
 
@@ -83,9 +86,11 @@ monitorMapvotePrematch() {
         }
     }
 
+    level.bgshader destroy(); // Destroy mapvote bg shader 
     foreach(option in level.optionHuds) { // Destroy server mapvote huds 
         option destroy();
     }
+    level.controlstext destroy(); // Destroy mapvote controls text 
 
     most_voted_map = getMostVotedMapname(level.selectableMaps, level.mapVotes);
     setDvar("mostvotedmap", most_voted_map);
@@ -103,7 +108,7 @@ playerMapvote() {
 
     self iprintlnbold("[{+speed_throw}][{+attack}] to scroll, [{+usereload}] to select.");
 
-    self.mapvoteScrollHud = self spawnClientShader("white", "RIGHT", "RIGHT", 0, -150, 125, 18, (0, 0, 1), 1, 0);
+    self.mapvoteScrollHud = self spawnClientShader("white", "RIGHT", "RIGHT", 0, -150, 125, 18, (0, 0, 1), 1, 1);
     self.mapvoteScrollIndex = 0;
 
     for(;;) {

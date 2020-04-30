@@ -8,6 +8,16 @@ spawnClientShader(shader, point, relativePoint, x, y, width, height, color, alph
 	return elem;
 }
 
+spawnServerShader(shader, point, relativePoint, x, y, width, height, color, alpha, sort, team) {
+	elem = createServerIcon(shader, width, height, team);
+	elem setPoint(point, relativePoint, x, y);
+	elem.color = color;
+	elem.alpha = alpha;
+	elem.sort = sort;
+	
+	return elem;
+}
+
 spawnServerText(font, text, fontScale, point, relativePoint, x, y, color, glowColor, alpha, glowAlpha, sort, team) {
 	elem = createServerFontString(font, fontScale, team);
 	elem setPoint(point, relativePoint, x, y);
